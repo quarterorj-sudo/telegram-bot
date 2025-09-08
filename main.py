@@ -72,9 +72,9 @@ def check_card(kartNo, kartAy, kartYil, kartCvc, chat_id):
         return f"❌ DECLINED | {kartNo}|{kartAy}|{kartYil}|{kartCvc} | {duration_text}"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("QuarterCheck’e Hoşgeldin! 😎\n"
-                                   "/txt - Kartları txt dosyasından kontrol et\n"
-                                   "/Puan - Tek bir kartı kontrol et")
+    await update.message.reply_text("QuarterCheck’e Hoşgeldin!\n"
+                                   "/txt - Txt Check\n"
+                                   "/Puan - Tekli Check")
 
 async def check_single(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
@@ -126,7 +126,7 @@ async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
             os.remove(file_path)
             return
 
-        await update.message.reply_text(f"{len(combos)} kart kontrol ediliyor...")
+        await update.message.reply_text(f"{len(combos)} Kart Checkleniyor...")
 
         THREAD_COUNT = 15
         with ThreadPoolExecutor(max_workers=THREAD_COUNT) as executor:
