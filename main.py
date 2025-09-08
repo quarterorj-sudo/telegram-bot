@@ -74,7 +74,7 @@ def check_card(kartNo, kartAy, kartYil, kartCvc, chat_id):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("QuarterCheck’e Hoşgeldin! 😎\n"
                                    "/txt - Kartları txt dosyasından kontrol et\n"
-                                   "/check - Tek bir kartı kontrol et")
+                                   "/Puan - Tek bir kartı kontrol et")
 
 async def check_single(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
@@ -155,7 +155,7 @@ def main():
 
     # Komutlar
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("check", check_single))
+    app.add_handler(CommandHandler("Puan", check_single))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_txt))
 
     print("Bot başlatıldı...")
