@@ -90,7 +90,7 @@ async def check_single(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Geçersiz kart formatı! Örnek: 1234567890123456|12|25|123")
             return
 
-        await update.message.reply_text("Kart kontrol ediliyor...")
+        await update.message.reply_text("Kart Checkleniyor...")
         result = check_card(kartNo, kartAy, kartYil, kartCvc, chat_id)
         if result:
             await update.message.reply_text(result)
