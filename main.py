@@ -72,8 +72,8 @@ def check_card(kartNo, kartAy, kartYil, kartCvc, chat_id):
         return f"❌ DECLINED | {kartNo}|{kartAy}|{kartYil}|{kartCvc} | {duration_text}"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("QuarterCheck’e Hoşgeldin!\n"
-                                   "/txt - Txt Check\n"
+    await update.message.reply_text("QuarterCheck’e Hoşgeldin! \n"
+                                   "/txt - Kartları Txt Check\n"
                                    "/Puan - Tekli Check")
 
 async def check_single(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -126,7 +126,7 @@ async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
             os.remove(file_path)
             return
 
-        await update.message.reply_text(f"{len(combos)} Kart Checkleniyor...")
+        await update.message.reply_text(f"{len(combos)} Kart Checkeniyor...")
 
         THREAD_COUNT = 15
         with ThreadPoolExecutor(max_workers=THREAD_COUNT) as executor:
@@ -155,7 +155,7 @@ def main():
 
     # Komutlar
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("Puan", check_single))
+    app.add_handler(CommandHandler("check", check_single))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_txt))
 
     print("Bot başlatıldı...")
