@@ -65,7 +65,7 @@ def check_card(kartNo, kartAy, kartYil, kartCvc, chat_id):
         if puan in ["0", "0.0"]:
             return None
 
-        msg = f"✅ LIVE | {kartNo}|{kartAy}|{kartYil}|{kartCvc} | Puan: {puan} | Api by @quicax"
+        msg = f"✅ LIVE | {kartNo}|{kartAy}|{kartYil}|{kartCvc} | Puan: {puan} | Api by @QuarterCarder"
         send_telegram(msg, chat_id)
         return msg
     else:
