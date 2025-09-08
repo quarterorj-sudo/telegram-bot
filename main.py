@@ -9,7 +9,7 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 import os
 
 # Sabitler
-TELEGRAM_TOKEN = "8290970736:AAFFPAHSfkE0mt6EaY-pwPYAsaBocHkhzkw"  # Telegram bot token
+TELEGRAM_TOKEN = "8290970736:AAFFPAHSfkE0mt6EaY-pwPYAsaBocHkhzkw"
 ua = UserAgent()
 fake = Faker('tr_TR')
 
@@ -66,20 +66,23 @@ def check_card(kartNo, kartAy, kartYil, kartCvc, chat_id):
             return None
 
         msg = f"✅ LIVE | {kartNo}|{kartAy}|{kartYil}|{kartCvc} | Puan: {puan} | Api by @QuarterCarder"
-        send_telegram(msg, chat_id)
+        send_telegram(msg, chat_id)  # Sonucu Telegram botuna da gönder
         return msg
     else:
         return f"❌ DECLINED | {kartNo}|{kartAy}|{kartYil}|{kartCvc} | {duration_text}"
 
+# /start komutu
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("QuarterCheck’e Hoşgeldin! \n"
-                                   "/txt - Kartları Txt Check\n"
-                                   "/Puan - Tekli Check")
+    await update.message.reply_text(
+        "QuarterCheck’e Hoşgeldin! \n"
+        "/txt - Kartları Txt Check\n"
+        "/puan - Tekli Check"
+    )
 
+# /puan komutu - tekli kart check
 async def check_single(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     try:
-        # Kullanıcıdan gelen mesajı al
         card_info = ' '.join(context.args)
         if not card_info:
             await update.message.reply_text("Lütfen kart bilgisini şu formatta gir: kartNo|kartAy|kartYil|kartCvc")
@@ -90,17 +93,24 @@ async def check_single(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Geçersiz kart formatı! Örnek: 1234567890123456|12|25|123")
             return
 
-        await update.message.reply_text("Kart Checkleniyor...")
+        # Kullanıcıya kartın checklendiğini bildir
+        waiting_msg = await update.message.reply_text("Kart Checkleniyor...")
+
+        # Kartı kontrol et
         result = check_card(kartNo, kartAy, kartYil, kartCvc, chat_id)
+
+        # Sonuç mesajını gönder (önceki mesajı güncelle)
         if result:
-            await update.message.reply_text(result)
+            await waiting_msg.edit_text(result)
         else:
-            await update.message.reply_text("Bir hata oluştu, tekrar dene.")
+            await waiting_msg.edit_text("Kart kontrolü sırasında bir hata oluştu, tekrar dene.")
+
     except ValueError:
         await update.message.reply_text("Geçersiz format! Örnek: 1234567890123456|12|25|123")
     except Exception as e:
         await update.message.reply_text(f"Hata: {e}")
 
+# /txt komutu - toplu check
 async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     if not update.message.document:
@@ -113,14 +123,13 @@ async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Sadece .txt dosyaları destekleniyor!")
         return
 
-    # Dosyayı indir
     file_path = f"temp_{chat_id}_{file_name}"
     await file.download_to_drive(file_path)
 
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             combos = [line.strip() for line in f if line.strip() and len(line.split("|")) == 4]
-        
+
         if not combos:
             await update.message.reply_text("Dosya boş veya format hatalı!")
             os.remove(file_path)
@@ -150,12 +159,12 @@ async def handle_txt(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if os.path.exists(file_path):
             os.remove(file_path)
 
+# Botu başlat
 def main():
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
-    # Komutlar
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("check", check_single))
+    app.add_handler(CommandHandler("puan", check_single))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_txt))
 
     print("Bot başlatıldı...")
